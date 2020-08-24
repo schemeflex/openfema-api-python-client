@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
 
+import logging
 import requests
+
+log = logging.getLogger('openfema-api-client')
 
 
 def __create_payload(page_number=0,
@@ -41,15 +44,15 @@ def fetch_from_api(url, last_updated_start, last_updated_end=None, items_per_pag
     total_count = metadata.get('count', 0)
     data_field_name = metadata.get('entityname')
     if total_count == 0:
-        print("No records found.")
+        log.debug("No records found")
         return []
 
     if data_field_name is None:
-        print("Invalid metadata, no entityname found")
+        log.error(f"Invalid metadata response from FEMA. No 'entityname' found: [Metadata ${metadata}]")
         return []
 
     total_pages = total_count // items_per_page + 1
-    print(f"Total pages = {total_pages}")
+    log.debug(f"Total pages to fetch: {total_pages}")
 
     return [record
             for curr_page in range(total_pages)
@@ -63,15 +66,15 @@ def fetch_from_api_generator(url, last_updated_start, last_updated_end=None, ite
     total_count = metadata.get('count', 0)
     data_field_name = metadata.get('entityname')
     if total_count == 0:
-        print("No records found.")
+        log.debug("No records found")
         return None
 
     if data_field_name is None:
-        print("Invalid metadata, no entityname found")
+        log.error(f"Invalid metadata response from FEMA. No 'entityname' found: [Metadata ${metadata}]")
         return None
 
     total_pages = total_count // items_per_page + 1
-    print(f"Total pages = {total_pages}")
+    log.debug(f"Total pages to fetch: {total_pages}")
 
     def generator():
         for curr_page in range(total_pages):
