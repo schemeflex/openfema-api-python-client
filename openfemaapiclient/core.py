@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import logging
 import requests
 
-log = logging.getLogger('open-fema-api-client')
+log = logging.getLogger('openfema-api-client')
 
 
 def __create_payload(page_number=0,
