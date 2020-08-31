@@ -96,3 +96,8 @@ def __fetch_metadata(url, last_updated_start=None, last_updated_end=None):
 
     return preflight_response.json().get('metadata')
 
+
+def fetch_disaster_declarations():
+    url = "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries"
+    api_json_response = requests.get(url).json()
+    return api_json_response
