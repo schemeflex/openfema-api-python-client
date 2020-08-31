@@ -3,25 +3,26 @@ from dataclasses import dataclass
 
 @dataclass
 class DataClassDisasterDeclaration:
-    id: str  # mapping uses id: femaOriginId
-    incidentType: str
-    declarationType: str  # uses varchar(2) on pg
-    declarationTitle: str
-    state: str
-    designatedArea: str
+    femaDeclarationString: str
     disasterNumber: int
-    hash: str
+    state: str
+    declarationType: str
+    declarationDate: str  # FEMA api lists as date type. Ex) "declarationDate":"1965-09-10T04:00:00.000Z"
     fyDeclared: int
-    fipsStateCode: str  # uses varchar(2) on pg
-    fipsCountyCode: str  # uses varchar(3) on pg
-    paProgramDeclared: bool
+    incidentType: str
+    declarationTitle: str
     ihProgramDeclared: bool
     iaProgramDeclared: bool
+    paProgramDeclared: bool
     hmProgramDeclared: bool
-    lastRefresh: str  # mapping uses lastRefresh: lastUpdatedDate
-    incidentBeginDate: str
-    incidentEndDate: str
-    declarationDate: str
-    disasterCloseoutDate: str
-    femaDeclarationString: str
+    incidentBeginDate: str  # FEMA api lists as date type. Ex) "incidentBeginDate":"1966-03-22T05:00:00.000Z"
+    incidentEndDate: str  # FEMA api lists as date type. Ex) "incidentEndDate":"1965-09-10T04:00:00.000Z"
+    disasterCloseoutDate: str  # FEMA api lists as date type. Ex) "disasterCloseOutDate":"1967-08-24T04:00:00.000Z"
+    fipsStateCode: str
+    fipsCountyCode: str
     placeCode: str
+    designatedArea: str
+    declarationRequestNumber: str
+    lastRefresh: str  # FEMA api lists as date type. Ex) "lastRefresh":"2019-07-26T18:49:32.438Z"
+    hash: str
+    id: str
