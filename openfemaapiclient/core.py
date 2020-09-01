@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from openfemaapiclient.disaster_declaration import DataClassDisasterDeclaration
+from openfemaapiclient.disaster_declaration import DisasterDeclaration
 
 import logging
 import requests
@@ -98,11 +98,27 @@ def __fetch_metadata(url, last_updated_start=None, last_updated_end=None):
     return preflight_response.json().get('metadata')
 
 
-def fetch_disaster_declarations():
-    #  Fetch api data, return list of DisasterDeclaration dataclass.
-    url = "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries"
-    api_json_response = requests.get(url).json()
-    disaster_declarations_list = []
-    for declaration in api_json_response["DisasterDeclarationsSummaries"]:
-        disaster_declarations_list.append(DataClassDisasterDeclaration(**declaration))
-    return disaster_declarations_list
+def __disaster_declaration_mapper(fema_json_array):
+    results = []
+    time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    for disaster in fema_json_array:
+        mapped_values = {}
+        for key in disaster:
+            if disaster.get(key) is None:
+                mapped_values[key] = None
+                continue
+            elif key in ["disasterNumber", "fyDeclared"]:
+                mapped_values[key] = int(disaster.get(key))
+            elif key in ["ihProgramDeclared", "iaProgramDeclared", "paProgramDeclared", "hmProgramDeclared"]:
+                mapped_values[key] = bool(disaster.get(key))
+            elif key in ["declarationDate", "incidentBeginDate", "incidentEndDate", "disasterCloseoutDate", "lastRefresh"]:
+                mapped_values[key] = datetime.strptime(disaster.get(key), time_format)
+            else:
+                mapped_values[key] = disaster.get(key)
+        results.append(DisasterDeclaration(**mapped_values))
+    return results
+
+
+def fetch_disaster_declarations_mapped():
+    return fetch_from_api("https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries", datetime.now() - timedelta(days=1), response_mapper=disaster_declaration_mapper)
+

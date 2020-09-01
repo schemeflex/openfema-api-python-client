@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 @dataclass(frozen=True)
-class DataClassDisasterDeclaration:
+class DisasterDeclaration:
     femaDeclarationString: str
     disasterNumber: int
     state: str
@@ -18,7 +18,7 @@ class DataClassDisasterDeclaration:
     hmProgramDeclared: bool
     incidentBeginDate: datetime
     incidentEndDate: datetime
-    disasterCloseOutDate: datetime
+    disasterCloseoutDate: datetime
     fipsStateCode: str
     fipsCountyCode: str
     placeCode: str
