@@ -18,7 +18,7 @@ class DataClassDisasterDeclaration:
     hmProgramDeclared: bool
     incidentBeginDate: datetime
     incidentEndDate: datetime
-    disasterCloseoutDate: datetime
+    disasterCloseOutDate: datetime
     fipsStateCode: str
     fipsCountyCode: str
     placeCode: str

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from openfemaapiclient.disaster_declaration import DataClassDisasterDeclaration
 
 import logging
 import requests
@@ -98,6 +99,10 @@ def __fetch_metadata(url, last_updated_start=None, last_updated_end=None):
 
 
 def fetch_disaster_declarations():
+    #  Fetch api data, return list of DisasterDeclaration dataclass.
     url = "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries"
     api_json_response = requests.get(url).json()
-    return api_json_response
+    disaster_declarations_list = []
+    for declaration in api_json_response["DisasterDeclarationsSummaries"]:
+        disaster_declarations_list.append(DataClassDisasterDeclaration(**declaration))
+    return disaster_declarations_list
