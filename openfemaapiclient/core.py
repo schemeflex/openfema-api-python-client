@@ -101,3 +101,10 @@ def __fetch_metadata(url, last_updated_start=None, last_updated_end=None):
 def fetch_disaster_declarations():
     return fetch_from_api("https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries", datetime.now() - timedelta(days=1), response_mapper=declaration_mapper)
 
+
+def fetch_pa_applicants():
+    return fetch_from_api("https://www.fema.gov/api/open/v1/PublicAssistanceApplicants", datetime.now() - timedelta(days=1), response_mapper=applicant_mapper)
+
+
+def fetch_pa_funded_projects():
+    return fetch_from_api("https://www.fema.gov/api/open/v1/PublicAssistanceFundedProjectsDetails", datetime.now() - timedelta(days=1), response_mapper=funded_project_mapper)
