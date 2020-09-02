@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
-from openfemaapiclient.disaster_declaration import DisasterDeclaration, declaration_mapper
+from openfemaapiclient.disaster_declaration import declaration_mapper
+from openfemaapiclient.pa_applicant import applicant_mapper
+from openfemaapiclient.pa_funded_project import funded_project_mapper
 
 import logging
 import requests
@@ -106,5 +108,5 @@ def fetch_pa_applicants():
     return fetch_from_api("https://www.fema.gov/api/open/v1/PublicAssistanceApplicants", datetime.now() - timedelta(days=1), response_mapper=applicant_mapper)
 
 
-def fetch_pa_funded_projects():
+def fetch_pa_funded_projects():  # Uses the pa funded projects details api endpoint.
     return fetch_from_api("https://www.fema.gov/api/open/v1/PublicAssistanceFundedProjectsDetails", datetime.now() - timedelta(days=1), response_mapper=funded_project_mapper)
