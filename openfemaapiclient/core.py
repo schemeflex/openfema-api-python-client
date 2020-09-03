@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 
 import requests
 
-from openfemaapiclient.disaster_declaration import declaration_mapper
-from openfemaapiclient.public_assistance_applicant import applicant_mapper
-from openfemaapiclient.public_assistance_funded_project import funded_project_mapper
+from .disaster_declaration import declaration_mapper
+from .public_assistance_applicant import applicant_mapper
+from .public_assistance_funded_project import funded_project_mapper
 
 log = logging.getLogger('openfema-api-client')
 
