@@ -44,19 +44,8 @@ def __fetch_page(url, page_number, data_field_name, last_updated_start=None, las
 
 
 def fetch_from_api(url, last_updated_start, last_updated_end=None, items_per_page=1000, response_mapper=None):
-    metadata = __fetch_metadata(url, last_updated_start, last_updated_end)
-    total_count = metadata.get('count', 0)
-    data_field_name = metadata.get('entityname')
-    if total_count == 0:
-        log.debug("No records found")
-        return []
-
-    if data_field_name is None:
-        log.error(f"Invalid metadata response from FEMA. No 'entityname' found: [Metadata ${metadata}]")
-        return []
-
-    total_pages = total_count // items_per_page + 1
-    log.debug(f"Total pages to fetch: {total_pages}")
+    total_pages, total_count, data_field_name = __parse_metadata(url, last_updated_start, last_updated_end,
+                                                                 items_per_page)
 
     return [record
             for curr_page in range(total_pages)
@@ -66,19 +55,8 @@ def fetch_from_api(url, last_updated_start, last_updated_end=None, items_per_pag
 
 
 def fetch_from_api_generator(url, last_updated_start, last_updated_end=None, items_per_page=1000, response_mapper=None):
-    metadata = __fetch_metadata(url, last_updated_start, last_updated_end)
-    total_count = metadata.get('count', 0)
-    data_field_name = metadata.get('entityname')
-    if total_count == 0:
-        log.debug("No records found")
-        return None
-
-    if data_field_name is None:
-        log.error(f"Invalid metadata response from FEMA. No 'entityname' found: [Metadata ${metadata}]")
-        return None
-
-    total_pages = total_count // items_per_page + 1
-    log.debug(f"Total pages to fetch: {total_pages}")
+    total_pages, total_count, data_field_name = __parse_metadata(url, last_updated_start, last_updated_end,
+                                                                 items_per_page)
 
     def generator():
         for curr_page in range(total_pages):
@@ -93,7 +71,25 @@ def fetch_from_api_generator(url, last_updated_start, last_updated_end=None, ite
     }
 
 
+def __parse_metadata(url, last_updated_start, last_updated_end, items_per_page=1000):
+    metadata = __fetch_metadata(url, last_updated_start, last_updated_end)
+    total_count = metadata.get('count', 0)
+    data_field_name = metadata.get('entityname')
+    if total_count == 0:
+        log.debug("No records found")
+        return None
+
+    if data_field_name is None:
+        log.error(f"Invalid metadata response from FEMA. No 'entityname' found: [Metadata ${metadata}]")
+        return None
+
+    total_pages = total_count // items_per_page + 1
+    log.debug(f"Total pages to fetch: {total_pages}")
+    return total_pages, total_count, data_field_name
+
+
 def __fetch_metadata(url, last_updated_start=None, last_updated_end=None):
+    log.info(f"Fetching metadata from {url}")
     preflight_payload = __create_payload(is_preflight=True, last_updated_start=last_updated_start,
                                          last_updated_end=last_updated_end)
     preflight_response = requests.get(url, preflight_payload)
@@ -107,28 +103,34 @@ FUNDED_PROJECTS_URL = "https://www.fema.gov/api/open/v1/PublicAssistanceFundedPr
 
 
 def fetch_disaster_declarations(start_date, end_date=None):
+    log.info(f"Fetching all DisasterDeclarations data from {start_date} to {end_date}")
     return fetch_from_api(DISASTER_URL, start_date, last_updated_end=end_date, response_mapper=declaration_mapper)
 
 
 def fetch_pa_applicants(start_date, end_date=None):
+    log.info(f"Fetching all Public Assistance Applicants data from {start_date} to {end_date}")
     return fetch_from_api(APPLICANTS_URL, start_date, last_updated_end=end_date, response_mapper=applicant_mapper)
 
 
-def fetch_pa_funded_projects(start_date, end_date=None):  # Uses the pa funded projects details api endpoint.
+def fetch_pa_funded_projects(start_date, end_date=None):
+    log.info(f"Fetching all Public Assistance Funded Projects data from {start_date} to {end_date}")
     return fetch_from_api(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
                           response_mapper=funded_project_mapper)
 
 
 def create_disaster_declarations_generator(start_date, end_date=None):
+    log.info(f"Creating DisasterDeclarations generator from {start_date} to {end_date}")
     return fetch_from_api_generator(DISASTER_URL, start_date, last_updated_end=end_date,
                                     response_mapper=declaration_mapper)
 
 
 def create_pa_applicants_generator(start_date, end_date=None):
+    log.info(f"Creating Public Assistance Applicants generator from {start_date} to {end_date}")
     return fetch_from_api_generator(APPLICANTS_URL, start_date, last_updated_end=end_date,
                                     response_mapper=applicant_mapper)
 
 
-def create_pa_funded_projects_generator(start_date, end_date=None):  # Uses the pa funded projects details api endpoint.
+def create_pa_funded_projects_generator(start_date, end_date=None):
+    log.info(f"Creating Public Assistance Funded Projects generator from {start_date} to {end_date}")
     return fetch_from_api_generator(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
                                     response_mapper=funded_project_mapper)
