@@ -117,3 +117,18 @@ def fetch_pa_applicants(start_date, end_date=None):
 def fetch_pa_funded_projects(start_date, end_date=None):  # Uses the pa funded projects details api endpoint.
     return fetch_from_api(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
                           response_mapper=funded_project_mapper)
+
+
+def create_disaster_declarations_generator(start_date, end_date=None):
+    return fetch_from_api_generator(DISASTER_URL, start_date, last_updated_end=end_date,
+                                    response_mapper=declaration_mapper)
+
+
+def create_pa_applicants_generator(start_date, end_date=None):
+    return fetch_from_api_generator(APPLICANTS_URL, start_date, last_updated_end=end_date,
+                                    response_mapper=applicant_mapper)
+
+
+def create_pa_funded_projects_generator(start_date, end_date=None):  # Uses the pa funded projects details api endpoint.
+    return fetch_from_api_generator(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
+                                    response_mapper=funded_project_mapper)
