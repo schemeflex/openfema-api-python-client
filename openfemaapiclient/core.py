@@ -1,7 +1,11 @@
+import logging
 from datetime import datetime, timedelta
 
-import logging
 import requests
+
+from openfemaapiclient.disaster_declaration import declaration_mapper
+from openfemaapiclient.public_assistance_applicant import applicant_mapper
+from openfemaapiclient.public_assistance_funded_project import funded_project_mapper
 
 log = logging.getLogger('openfema-api-client')
 
@@ -96,3 +100,20 @@ def __fetch_metadata(url, last_updated_start=None, last_updated_end=None):
 
     return preflight_response.json().get('metadata')
 
+
+DISASTER_URL = "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries"
+APPLICANTS_URL = "https://www.fema.gov/api/open/v1/PublicAssistanceApplicants"
+FUNDED_PROJECTS_URL = "https://www.fema.gov/api/open/v1/PublicAssistanceFundedProjectsDetails"
+
+
+def fetch_disaster_declarations(start_date, end_date=None):
+    return fetch_from_api(DISASTER_URL, start_date, last_updated_end=end_date, response_mapper=declaration_mapper)
+
+
+def fetch_pa_applicants(start_date, end_date=None):
+    return fetch_from_api(APPLICANTS_URL, start_date, last_updated_end=end_date, response_mapper=applicant_mapper)
+
+
+def fetch_pa_funded_projects(start_date, end_date=None):  # Uses the pa funded projects details api endpoint.
+    return fetch_from_api(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
+                          response_mapper=funded_project_mapper)
