@@ -1,18 +1,16 @@
 from dataclasses import dataclass
 from datetime import datetime
+from .dateutils import try_extract_date
+
+DATETIME_FIELDS = {"lastRefresh", "declarationDate", "obligatedDate"}
 
 
 def funded_project_mapper(records):
-    funded_project_datetime_fields = {"lastRefresh", "declarationDate", "obligatedDate"}
     results = []
     for record in records:
-        mapped_result = {k: __to_datetime(v) if k in funded_project_datetime_fields else v for k, v in record.items()}
+        mapped_result = {k: try_extract_date(v) if k in DATETIME_FIELDS else v for k, v in record.items()}
         results.append(PAFundedProject(**mapped_result))
     return results
-
-
-def __to_datetime(value):
-    return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ") if value else None
 
 
 @dataclass(frozen=True)
