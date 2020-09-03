@@ -28,7 +28,7 @@ def __create_payload(page_number=0,
         payload['$skip'] = page_number * items_per_page
 
     if is_preflight:
-        payload['$limit'] = 0
+        payload['$top'] = 0
 
     return payload
 
