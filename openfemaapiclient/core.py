@@ -103,34 +103,97 @@ FUNDED_PROJECTS_URL = "https://www.fema.gov/api/open/v1/PublicAssistanceFundedPr
 
 
 def fetch_disaster_declarations(start_date, end_date=None):
+    """Fetches all DisasterDeclarations between the start_date and end_date, if end_date is None, fetches all since
+    start_date
+
+    :param start_date: datetime object for the earliest last updated date
+    :param end_date: (optional) datetime object for the latest last updated end
+    :return: List[DisasterDeclaration]
+    """
     log.info(f"Fetching all DisasterDeclarations data from {start_date} to {end_date}")
     return fetch_from_api(DISASTER_URL, start_date, last_updated_end=end_date, response_mapper=declaration_mapper)
 
 
 def fetch_pa_applicants(start_date, end_date=None):
+    """Fetches all PublicAssistanceApplicants between the start_date and end_date, if end_date is None, fetches all
+    since start_date
+
+    :param start_date: datetime object for the earliest last updated date
+    :param end_date: (optional) datetime object for the latest last updated end
+    :return: List[PublicAssistanceApplicants]
+    """
     log.info(f"Fetching all Public Assistance Applicants data from {start_date} to {end_date}")
     return fetch_from_api(APPLICANTS_URL, start_date, last_updated_end=end_date, response_mapper=applicant_mapper)
 
 
 def fetch_pa_funded_projects(start_date, end_date=None):
+    """Fetches all PublicAssistanceFundedProjects between the start_date and end_date, if end_date is None, fetches all
+    since start_date
+
+    :param start_date: datetime object for the earliest last updated date
+    :param end_date: (optional) datetime object for the latest last updated end
+    :return: List[PublicAssistanceFundedProjects]
+    """
     log.info(f"Fetching all Public Assistance Funded Projects data from {start_date} to {end_date}")
     return fetch_from_api(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
                           response_mapper=funded_project_mapper)
 
 
 def create_disaster_declarations_generator(start_date, end_date=None):
+    """Creates a generator wrapper of the format:
+    {
+        'total_count': total_count,
+        'total_pages': total_pages,
+        'generator': generator
+    }
+
+    with total_count of all available DisasterDeclaration objects and the number of pages expected during iteration, and
+    where the generator is a Generator[List[DisasterDeclaration]]
+
+    :param start_date: datetime object for the earliest last updated date
+    :param end_date: (optional) datetime object for the latest last updated end
+    :return: dict with keys total_count, total_pages, generator
+    """
     log.info(f"Creating DisasterDeclarations generator from {start_date} to {end_date}")
     return fetch_from_api_generator(DISASTER_URL, start_date, last_updated_end=end_date,
                                     response_mapper=declaration_mapper)
 
 
 def create_pa_applicants_generator(start_date, end_date=None):
+    """Creates a generator wrapper of the format:
+    {
+        'total_count': total_count,
+        'total_pages': total_pages,
+        'generator': generator
+    }
+
+    with total_count of all available PublicAssistanceApplicants objects and the number of pages expected during
+    iteration, and where the generator is a Generator[List[DisasterDeclaration]]
+
+    :param start_date: datetime object for the earliest last updated date
+    :param end_date: (optional) datetime object for the latest last updated end
+    :return: dict with keys total_count, total_pages, generator
+    """
     log.info(f"Creating Public Assistance Applicants generator from {start_date} to {end_date}")
     return fetch_from_api_generator(APPLICANTS_URL, start_date, last_updated_end=end_date,
                                     response_mapper=applicant_mapper)
 
 
 def create_pa_funded_projects_generator(start_date, end_date=None):
+    """Creates a generator wrapper of the format:
+    {
+        'total_count': total_count,
+        'total_pages': total_pages,
+        'generator': generator
+    }
+
+    with total_count of all available PublicAssistanceFundedProjects objects and the number of pages expected during
+    iteration, and where the generator is a Generator[List[PublicAssistanceFundedProjects]]
+
+    :param start_date: datetime object for the earliest last updated date
+    :param end_date: (optional) datetime object for the latest last updated end
+    :return: dict with keys total_count, total_pages, generator
+    """
     log.info(f"Creating Public Assistance Funded Projects generator from {start_date} to {end_date}")
     return fetch_from_api_generator(FUNDED_PROJECTS_URL, start_date, last_updated_end=end_date,
                                     response_mapper=funded_project_mapper)

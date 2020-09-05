@@ -9,12 +9,12 @@ def funded_project_mapper(records):
     results = []
     for record in records:
         mapped_result = {k: try_extract_date(v) if k in DATETIME_FIELDS else v for k, v in record.items()}
-        results.append(PAFundedProject(**mapped_result))
+        results.append(PublicAssistanceFundedProject(**mapped_result))
     return results
 
 
 @dataclass(frozen=True)
-class PAFundedProject:
+class PublicAssistanceFundedProject:
     disasterNumber: int
     pwNumber: int
     applicationTitle: str
