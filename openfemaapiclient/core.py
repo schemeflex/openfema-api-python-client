@@ -72,16 +72,20 @@ def fetch_from_api_generator(url, last_updated_start, last_updated_end=None, ite
 
 
 def __parse_metadata(url, last_updated_start, last_updated_end, items_per_page=1000):
+    if items_per_page <= 0:
+        raise Exception("Invalid items_per_page")
+
     metadata = __fetch_metadata(url, last_updated_start, last_updated_end)
-    total_count = metadata.get('count', 0)
+    total_count = metadata.get('count')
     data_field_name = metadata.get('entityname')
-    if total_count == 0:
-        log.debug("No records found")
-        return None
+
+    if total_count is None:
+        log.error(f"Invalid metadata response from FEMA. No 'count' found: [Metadata ${metadata}]")
+        raise Exception('Invalid count')
 
     if data_field_name is None:
         log.error(f"Invalid metadata response from FEMA. No 'entityname' found: [Metadata ${metadata}]")
-        return None
+        raise Exception('Invalid metadata')
 
     total_pages = total_count // items_per_page + 1
     log.debug(f"Total pages to fetch: {total_pages}")
