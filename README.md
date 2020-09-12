@@ -20,7 +20,7 @@ from openfemaapiclient import fetch_pa_applicants, PublicAssistanceApplicant
 
 
 yesterday =  datetime.now().replace(microsecond=0, second=0, minute=0, hour=0) - timedelta(days=1)
-applicants: PublicAssistanceApplicant = fetch_pa_applicants(yesterday)
+applicants: List[PublicAssistanceApplicant] = fetch_pa_applicants(yesterday)
 
 for applicant in applicants:
     print(applicant)
